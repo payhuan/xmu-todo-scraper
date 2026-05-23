@@ -1,0 +1,19 @@
+# XMU 课程网待办爬取配置
+base_url: "https://lnt.xmu.edu.cn"
+
+output:
+  dir: "./output"
+  formats:
+    - html
+    - json
+  filename: "todos"
+
+auth:
+  state_file: "./data/auth_state.json"
+
+browser:
+  headless: true
+  timeout_ms: 60000
+
+notifier:
+  shortcut: "%USERPROFILE%\\Desktop\\todos.lnk"

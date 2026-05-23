@@ -1,3 +1,6 @@
+# Claude Code 项目说明
+CLAUDE.md
+
 # 会话凭据（含浏览器 cookie，切勿提交）
 data/auth_state.json
 data/credentials.json

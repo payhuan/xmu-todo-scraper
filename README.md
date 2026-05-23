@@ -22,16 +22,13 @@
 # 1. 安装依赖
 pip install -r requirements.txt
 
-# 2. 保存账号
+# 2. 保存账号（仅首次）
 python main.py --save-cred
 
-# 3. 手动登录（如需验证码）
-python main.py --login
-
-# 4. 运行
+# 3. 运行（自动登录，无需验证码）
 python main.py --run
 
-# 5. （可选）注册每小时自动运行
+# 4. （可选）每小时自动运行
 .\schedule.ps1
 ```
 

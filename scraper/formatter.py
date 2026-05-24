@@ -1,14 +1,18 @@
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from .models import TodoItem, CourseTodos
+
+CST = timezone(timedelta(hours=8))  # 北京时间 UTC+8
 
 
 def format_datetime(dt: datetime | None, fmt: str = "%m-%d %H:%M") -> str:
     if dt is None:
         return "无截止"
-    return dt.strftime(fmt)
+    if dt.tzinfo is None:
+        return dt.strftime(fmt)
+    return dt.astimezone(CST).strftime(fmt)
 
 
 def _overdue_days(end_time: datetime) -> int:

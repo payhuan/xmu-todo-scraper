@@ -140,10 +140,18 @@ def _render_course_blocks(courses: list[CourseTodos], section_class: str, sectio
         rows = []
         for item in course.sorted_items:
             deadline = format_datetime(item.end_time, "%Y-%m-%d %H:%M")
-            sev = _severity_class(item)
-            label = _overdue_label(item.end_time) if item.is_overdue else ""
-            badge = f'<span class="badge overdue-badge {sev}">{label}</span>' if item.is_overdue else ""
-            rows.append(f"""<tr class="{sev}">
+            row_class = ""
+            badge = ""
+
+            if item.is_overdue:
+                row_class = _severity_class(item)
+                label = _overdue_label(item.end_time)
+                badge = f'<span class="badge overdue-badge {row_class}">{label}</span>'
+            elif item.urgency_days is not None and item.urgency_days <= 1:
+                row_class = "urgent"
+                badge = '<span class="badge urgent-badge">即将截止</span>'
+
+            rows.append(f"""<tr class="{row_class}">
         <td class="deadline">{deadline}</td>
         <td class="type">{item.todo_type or '-'}</td>
         <td class="title">{item.title}</td>
@@ -240,6 +248,8 @@ def to_html(courses: list[CourseTodos], today: datetime | None = None) -> str:
     tr.warn {{ background: #fffdf7; }}
     tr.danger {{ background: #fffbfb; }}
     tr.critical {{ background: #fdf7ff; }}
+    tr.urgent {{ background: #f0f9ff; border-left: 3px solid #1677ff; }}
+    tr.urgent .deadline {{ color: #1677ff; font-weight: 600; }}
     .deadline {{ color: #555; white-space: nowrap; font-variant-numeric: tabular-nums; }}
     .type {{
         color: #1677ff; background: #e6f4ff; padding: 2px 10px;
@@ -251,6 +261,15 @@ def to_html(courses: list[CourseTodos], today: datetime | None = None) -> str:
     .badge.overdue-badge.warn {{ background: #fff7e6; color: #d46b08; }}
     .badge.overdue-badge.danger {{ background: #fff1f0; color: #cf1322; }}
     .badge.overdue-badge.critical {{ background: #f9f0ff; color: #531dab; }}
+    .badge.urgent-badge {{
+        background: #e6f4ff; color: #1677ff;
+        padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 600;
+        animation: pulse 1.5s ease-in-out infinite;
+    }}
+    @keyframes pulse {{
+        0%, 100% {{ opacity: 1; }}
+        50% {{ opacity: 0.5; }}
+    }}
     .completeness {{ color: #888; }}
     footer {{ text-align: center; padding: 24px; color: #bbb; font-size: 12px; }}
     @media (max-width: 600px) {{

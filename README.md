@@ -19,9 +19,8 @@
 ## 快速开始
 
 ```bash
-# 1. 安装依赖
+# 1. 安装依赖（没有 Chrome/Edge 的电脑需额外执行 playwright install chromium）
 pip install -r requirements.txt
-playwright install chromium
 
 # 2. 保存账号（仅首次）
 python main.py --save-cred

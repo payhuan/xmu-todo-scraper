@@ -8,14 +8,21 @@ from playwright.sync_api import sync_playwright
 
 
 def _launch_browser(p, headless: bool = True):
-    try:
-        return p.chromium.launch(headless=headless)
-    except Exception as e:
-        if "Executable doesn't exist" in str(e) or "BrowserType.launch" in str(e):
-            print("\n未找到 Chromium 浏览器，请先运行:\n  playwright install chromium\n")
-        else:
-            print(f"启动浏览器失败: {e}")
-        sys.exit(1)
+    """启动 Chromium 浏览器，优先复用系统已安装的 Chrome/Edge。"""
+    for channel, name in [("chrome", "Chrome"), ("msedge", "Edge"), (None, "Chromium")]:
+        try:
+            launch_args = {"headless": headless}
+            if channel:
+                launch_args["channel"] = channel
+            return p.chromium.launch(**launch_args)
+        except Exception as e:
+            last_error = e
+
+    if "Executable doesn't exist" in str(last_error):
+        print(f"\n未找到可用浏览器，请安装 Chrome/Edge 或运行:\n  playwright install chromium\n")
+    else:
+        print(f"启动浏览器失败: {last_error}")
+    sys.exit(1)
 
 
 def _creds_path(data_dir: str) -> str:

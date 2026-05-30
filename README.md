@@ -21,6 +21,7 @@
 ```bash
 # 1. 安装依赖
 pip install -r requirements.txt
+playwright install chromium
 
 # 2. 保存账号（仅首次）
 python main.py --save-cred

@@ -2,7 +2,20 @@ import base64
 import json
 import os
 
+import sys
+
 from playwright.sync_api import sync_playwright
+
+
+def _launch_browser(p, headless: bool = True):
+    try:
+        return p.chromium.launch(headless=headless)
+    except Exception as e:
+        if "Executable doesn't exist" in str(e) or "BrowserType.launch" in str(e):
+            print("\n未找到 Chromium 浏览器，请先运行:\n  playwright install chromium\n")
+        else:
+            print(f"启动浏览器失败: {e}")
+        sys.exit(1)
 
 
 def _creds_path(data_dir: str) -> str:
@@ -75,7 +88,7 @@ def login_and_save_state(base_url: str, state_path: str) -> None:
     """打开浏览器让用户手动登录。"""
     os.makedirs(os.path.dirname(state_path), exist_ok=True)
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = _launch_browser(p, headless=False)
         context = browser.new_context(
             viewport={"width": 1280, "height": 800}, locale="zh-CN")
         page = context.new_page()
@@ -96,7 +109,7 @@ def auto_login(base_url: str, username: str, password: str, state_path: str) -> 
     """自动填充 XMU CAS 认证表单并登录。"""
     os.makedirs(os.path.dirname(state_path), exist_ok=True)
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = _launch_browser(p, headless=True)
         context = browser.new_context(
             viewport={"width": 1280, "height": 800}, locale="zh-CN")
         page = context.new_page()

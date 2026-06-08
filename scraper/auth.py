@@ -176,7 +176,7 @@ def create_context(state_path: str, headless: bool = True):
         raise FileNotFoundError(
             f"未找到登录状态文件: {state_path}\n请先运行: python main.py --login")
     playwright = sync_playwright().start()
-    browser = playwright.chromium.launch(headless=headless)
+    browser = _launch_browser(playwright, headless=headless)
     context = browser.new_context(
         storage_state=state_path,
         viewport={"width": 1280, "height": 800}, locale="zh-CN")
